@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DAL/DAL.csproj" />
+  <Project Path="Services/Services.csproj" />
+  <Project Path="VideoAntiPlagiarismTool.AppHost/VideoAntiPlagiarismTool.AppHost.csproj" />
+  <Project Path="VideoAntiPlagiarismTool.ServiceDefaults/VideoAntiPlagiarismTool.ServiceDefaults.csproj" />
+</Solution>
