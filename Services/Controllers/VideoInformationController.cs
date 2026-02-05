@@ -67,7 +67,9 @@ namespace Services.Controllers
         [HttpGet]
         public IActionResult GetVideoInformation([FromServices] ODataQueryOptions<VideoInformationDTO<string>>? odataOptions = null)
         {
-            return Ok(OData2LinqQueryBuilder.Build(odataOptions).Invoke(TestData.AsQueryable()));
+            var results = OData2LinqQueryBuilder.Build(odataOptions)?.Invoke(TestData.AsQueryable()).ToList() ?? TestData.AsQueryable().ToList();
+
+            return Ok(results);
         }
     }   
 }
