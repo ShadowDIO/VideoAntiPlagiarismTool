@@ -1,24 +1,45 @@
+using DAL.Extensions;
 using DotNetEnv;
+using DotNetEnv.Configuration;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
 using System.Security.Claims;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
+
 // Configuration
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appSettings.json", true, true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
     .AddEnvironmentVariables()
+    .AddDotNetEnv("secrets.env", LoadOptions.TraversePath())
     .Build();
+
 builder.Configuration.AddConfiguration(configuration);
+
+// DBs
+var defaultConnectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? Environment.GetEnvironmentVariable("POSTGRESQLCONNSTR_DefaultConnection") ?? throw new Exception("Connection String not configured.");
+
 // Add services to the container.
 
+builder.Services.RegisterDALs(defaultConnectionString);
+
+
+
 builder.Services.AddControllers();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddEndpointsApiExplorer();
+
+
 
 //builder.Services.AddAuthentication(options =>
 //{
@@ -50,18 +71,13 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Load .env only in Development
-if (builder.Environment.IsDevelopment())
-{
-    Env.Load();
-}
-
-app.MapDefaultEndpoints();
+//app.MapDefaultEndpoints();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapSwaggerUI();
 }
 
 app.UseHttpsRedirection();
