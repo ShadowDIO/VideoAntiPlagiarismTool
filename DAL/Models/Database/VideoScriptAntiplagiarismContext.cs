@@ -42,7 +42,7 @@ public partial class VideoScriptAntiplagiarismContext : DbContext
 
             entity.ToTable("video_information");
 
-            entity.HasIndex(e => e.UserId, "a_idx");
+            entity.HasIndex(e => e.UserId, "fk_video_information_users_user_id_idx");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ChannelTitle)
@@ -66,7 +66,7 @@ public partial class VideoScriptAntiplagiarismContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.VideoInformations)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fk_video_information_users");
+                .HasConstraintName("fk_video_information_users_user_id");
         });
 
         OnModelCreatingPartial(modelBuilder);
